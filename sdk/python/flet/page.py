@@ -154,47 +154,6 @@ class Page(Control):
 
         self.update()
 
-    # Decorator for url routing
-    def view_route(self, route: str = None, function_as_route: bool = False):
-        """
-        `view_route` takes only one of two arguments, `route` and `function_as_route`\n
-        `route` is a string that will be used as a route for the view\n
-        `function_as_route` is a boolean that will be used to determine if the function name will be used as a route for the view\n
-
-        `Note`: Use only one of the arguments, `route` or `function_as_route` at a time. If both are used, `route` will be used as a route for the view\n
-        """
-
-        def view_func(func):
-            def is_default_view():
-                """
-                This function checks if an initial `View()` exists to clear from `page.views`
-                """
-                return (
-                    True
-                    if len(self.views) == 1 and self.views[0].route == None
-                    else None
-                )
-
-            view = (
-                func()
-            )  # Call the function by reference to access the returned `View` object
-
-            assert isinstance(
-                view, View
-            ), f"The function '{func.__name__}' must return a View object"  # Validate if the function returns a View object
-            view.route = (
-                route if not function_as_route else "/" + func.__name__
-            )  # Initializing route for view
-
-            if is_default_view():  # If default view exists, remove it
-                self.views.clear()
-
-            self.views.append(view)  # Append view to page.views
-            self.update()  # Update page
-
-            return func  # Return function
-
-        return view_func
 
     def add_page_router(self, router: PageRouter):
         """
