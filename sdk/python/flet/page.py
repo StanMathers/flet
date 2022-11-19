@@ -136,6 +136,20 @@ class Page(Control):
     def get_control(self, id):
         return self._index.get(id)
 
+    def simple_route_changer(self, route: str):
+        """
+        Simple route changer is created to support `view_route` decorator due to its structure\n
+        it's not recommended using simple route changer with manually created views but it's still possible to use
+        """
+        for i in range(len(self.views)):
+
+            if self.views[i].route == route.route:
+                view = self.views[i]
+                self.views.pop(i)
+                self.views.append(view)
+
+        self.update()
+
     # Decorator for url routing
     def view_route(self, route: str):
         """
@@ -146,33 +160,35 @@ class Page(Control):
             """
             `view_func` inner function handles a function returning `View` objcet
             """
-            
+
             def is_default_view():
                 """
                 This function checks if an initial `View()` exists to clear from `page.views`
                 """
                 if len(self.views) == 1 and self.views[0].route == None:
                     return True
-            
+
             view = func()
             assert isinstance(view, View), "The function must return a View object"
-            
+
             view.route = route
-            print(f"""
+            print(
+                f"""
                     Route: {route}
                     Function name: {func.__name__}
                     Function route: {view.route}
-                    """)
-            
+                    """
+            )
+
             if is_default_view():
                 self.views.clear()
-            
+
             self.views.append(view)
-            
+
             self.update()
-            
+
             return func
-        
+
         return view_func
 
     def _before_build_command(self):
@@ -492,10 +508,7 @@ class Page(Control):
         self.invoke_method("launchUrl", args)
 
     @beartype
-    def can_launch_url(
-        self,
-        url: str
-    ):
+    def can_launch_url(self, url: str):
         args = {"url": url}
         return self.invoke_method("canLaunchUrl", args, wait_for_result=True) == "true"
 
