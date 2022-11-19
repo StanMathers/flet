@@ -136,6 +136,45 @@ class Page(Control):
     def get_control(self, id):
         return self._index.get(id)
 
+    # Decorator for url routing
+    def view_route(self, route: str):
+        """
+        `view_route` decorator takes `route` as an argument to use it as a route while adding `View` into `page.views`
+        """
+
+        def view_func(func):
+            """
+            `view_func` inner function handles a function returning `View` objcet
+            """
+            
+            def is_default_view():
+                """
+                This function checks if an initial `View()` exists to clear from `page.views`
+                """
+                if len(self.views) == 1 and self.views[0].route == None:
+                    return True
+            
+            view = func()
+            assert isinstance(view, View), "The function must return a View object"
+            
+            view.route = route
+            print(f"""
+                    Route: {route}
+                    Function name: {func.__name__}
+                    Function route: {view.route}
+                    """)
+            
+            if is_default_view():
+                self.views.clear()
+            
+            self.views.append(view)
+            
+            self.update()
+            
+            return func
+        
+        return view_func
+
     def _before_build_command(self):
         super()._before_build_command()
         # fonts
