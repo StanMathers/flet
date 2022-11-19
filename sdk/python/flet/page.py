@@ -184,7 +184,7 @@ class Page(Control):
 
             assert isinstance(
                 view, View
-            ), "The function must return a View object"  # Validate if the function returns a View object
+            ), f"The function '{func.__name__}' must return a View object"  # Validate if the function returns a View object
             view.route = (
                 route if not function_as_route else "/" + func.__name__
             )  # Initializing route for view
