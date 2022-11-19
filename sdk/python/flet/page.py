@@ -165,10 +165,6 @@ class Page(Control):
         """
 
         def view_func(func):
-            """
-            `view_func` inner function handles a function returning `View` objcet
-            """
-
             def is_default_view():
                 """
                 This function checks if an initial `View()` exists to clear from `page.views`
@@ -199,36 +195,27 @@ class Page(Control):
             return func  # Return function
 
         return view_func
-    
+
     def add_page_router(self, router: PageRouter):
         """
         `add_page_router` adds a page router to the page
         """
+
         def is_default_view():
             """
             This function checks if an initial `View()` exists to clear from `page.views`
             """
             return (
-                True
-                if len(self.views) == 1 and self.views[0].route == None
-                else None
+                True if len(self.views) == 1 and self.views[0].route == None else None
             )
 
         if is_default_view():
             self.views.clear()
-        print(f"""
-        THIS IS A TEST MESSAGE:
-        {router.objs}
-        """)
-        
+
         for i in router.objs:
             self.views.append(i)
-        
+
         self.update()
-        print(f"""
-              THIS IS A TEST MESSAGE:
-                {self.views}
-              """)
 
     def _before_build_command(self):
         super()._before_build_command()
